@@ -10,7 +10,7 @@ import { BookmarkDialog } from "./bookmark-dialog";
 import { GroupManagerDialog } from "./group-manager-dialog";
 import { useBookmarks } from "./use-bookmarks";
 
-/** Bookmark tracker: favicon list with optional category filtering. */
+/** Resource library: favicon list with optional group filtering. */
 export function BookmarkCard({ className }: { className?: string }) {
   const {
     bookmarks,
@@ -29,7 +29,7 @@ export function BookmarkCard({ className }: { className?: string }) {
   async function handleRemoveGroup(name: string) {
     const ok = await confirm({
       title: `Xoá nhóm "${name}"?`,
-      message: 'Bookmark trong nhóm sẽ chuyển về "Không nhóm".',
+      message: 'Resource trong nhóm sẽ chuyển về "Không nhóm".',
       confirmLabel: "Xoá nhóm",
       danger: true,
     });
@@ -45,7 +45,7 @@ export function BookmarkCard({ className }: { className?: string }) {
   return (
     <BentoCard
       icon={BookmarkIcon}
-      title="Bookmark"
+      title="Resources"
       scrollBody={false}
       className={className}
       action={
@@ -56,7 +56,7 @@ export function BookmarkCard({ className }: { className?: string }) {
             className="flex h-9 items-center gap-1.5 rounded-full bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
-            Thêm bookmark
+            Thêm resource
           </button>
           <IconButton
             aria-label="Quản lý nhóm"
@@ -88,7 +88,7 @@ export function BookmarkCard({ className }: { className?: string }) {
         <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto">
           {visible.length === 0 ? (
             <p className="grid flex-1 place-items-center text-sm text-ink-faint">
-              Chưa có bookmark nào
+              Chưa có resource nào
             </p>
           ) : (
             visible.map((b) => (
@@ -126,10 +126,10 @@ export function BookmarkCard({ className }: { className?: string }) {
                     </span>
                   ) : null}
                 </a>
-                <Tooltip label="Xóa bookmark">
+                <Tooltip label="Xóa resource">
                   <button
                     type="button"
-                    aria-label="Xóa bookmark"
+                    aria-label="Xóa resource"
                     onClick={() => removeBookmark(b.id)}
                     className="grid h-7 w-0 shrink-0 place-items-center overflow-hidden rounded-full text-ink-faint opacity-0 transition-all duration-200 hover:bg-surface-hover hover:text-ink group-hover:ml-2 group-hover:w-7 group-hover:opacity-100"
                   >
