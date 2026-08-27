@@ -22,11 +22,6 @@ export function titleFromUrl(url: string): string {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
 
-/** Google favicon service — works for any public domain without an API key. */
-export function faviconUrl(url: string): string {
-  return `https://www.google.com/s2/favicons?domain=${hostname(url)}&sz=64`;
-}
-
 /**
  * Trim a verbose page title to its first meaningful segment, e.g.
  * "Stripe | Financial Infrastructure…" -> "Stripe". Keeps the full string if
