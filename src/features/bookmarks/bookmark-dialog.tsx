@@ -64,7 +64,7 @@ export function BookmarkDialog({
   }
 
   return (
-    <Modal open={open} title="Lưu bookmark" onClose={onClose}>
+    <Modal open={open} title="Thêm resource" onClose={onClose}>
       <div className="space-y-4">
         <div>
           <FieldLabel>Đường dẫn</FieldLabel>
@@ -106,7 +106,7 @@ export function BookmarkDialog({
         <button
           type="button"
           onClick={submit}
-          className="w-full rounded-full bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
+          className="w-full rounded-[var(--radius-inner)] bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
         >
           Lưu lại
         </button>

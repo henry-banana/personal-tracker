@@ -23,7 +23,7 @@ export function App() {
 
   return (
     <div className="min-h-screen p-2">
-      <div className="flex flex-col gap-2 rounded-[2rem] bg-shell p-2 backdrop-blur-sm lg:h-[calc(100dvh-1rem)]">
+      <div className="flex flex-col gap-2 rounded-[1rem] border border-line bg-shell p-2 backdrop-blur-sm lg:h-[calc(100dvh-1rem)]">
         <DashboardHeader
           title={settings.boardTitle}
           onOpenSettings={() => setSettingsOpen(true)}

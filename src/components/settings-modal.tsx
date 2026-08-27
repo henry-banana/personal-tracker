@@ -68,7 +68,7 @@ export function SettingsModal({
       await confirm({
         title: "Xoá toàn bộ dữ liệu?",
         message:
-          "Tất cả task, ghi chú, bookmark sẽ bị xoá. Cài đặt giao diện được giữ lại.",
+          "Tất cả task, resource và thói quen sẽ bị xoá. Cài đặt giao diện được giữ lại.",
         confirmLabel: "Xoá data",
         danger: true,
       })
@@ -82,7 +82,7 @@ export function SettingsModal({
       await confirm({
         title: "Tạo dữ liệu mẫu?",
         message:
-          "Thao tác này ghi đè toàn bộ task, ghi chú, bookmark hiện có bằng bộ dữ liệu mẫu.",
+          "Thao tác này ghi đè toàn bộ task, resource và thói quen hiện có bằng bộ dữ liệu mẫu.",
         confirmLabel: "Tạo data mẫu",
       })
     ) {
@@ -180,7 +180,7 @@ export function SettingsModal({
               <button
                 type="button"
                 onClick={handlePurge}
-                className="flex shrink-0 items-center gap-1.5 rounded-full bg-surface-muted px-4 text-sm font-semibold text-ink transition-colors hover:bg-surface-hover"
+                className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-inner)] bg-surface-muted px-4 text-sm font-semibold text-ink transition-colors hover:bg-surface-hover"
               >
                 <Trash2 size={15} />
                 Xoá
@@ -192,7 +192,7 @@ export function SettingsModal({
             <button
               type="button"
               onClick={handleClear}
-              className="flex items-center justify-center gap-2 rounded-full bg-red-50 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+              className="flex items-center justify-center gap-2 rounded-[var(--radius-inner)] bg-red-50 py-2.5 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
             >
               <Trash2 size={16} />
               Xoá toàn bộ
@@ -200,7 +200,7 @@ export function SettingsModal({
             <button
               type="button"
               onClick={handleSeed}
-              className="flex items-center justify-center gap-2 rounded-full bg-surface-muted py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-surface-hover"
+              className="flex items-center justify-center gap-2 rounded-[var(--radius-inner)] bg-surface-muted py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-surface-hover"
             >
               <Sparkles size={16} />
               Tạo data mẫu
@@ -228,7 +228,7 @@ function ThemeOption({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex h-11 items-center justify-center gap-2 rounded-full text-sm font-medium transition-colors",
+        "flex h-11 items-center justify-center gap-2 rounded-[var(--radius-inner)] text-sm font-medium transition-colors",
         active
           ? "bg-accent-strong text-white"
           : "bg-surface-muted text-ink-soft hover:bg-surface-hover",

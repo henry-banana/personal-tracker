@@ -62,7 +62,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => settle(false)}
-              className="flex-1 rounded-full bg-surface-muted py-2.5 text-sm font-semibold text-ink-soft transition-colors hover:bg-surface-hover"
+              className="flex-1 rounded-[var(--radius-inner)] bg-surface-muted py-2.5 text-sm font-semibold text-ink-soft transition-colors hover:bg-surface-hover"
             >
               {options.cancelLabel ?? "Huỷ"}
             </button>
@@ -70,7 +70,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               type="button"
               onClick={() => settle(true)}
               className={cn(
-                "flex-1 rounded-full py-2.5 text-sm font-semibold transition-colors",
+                "flex-1 rounded-[var(--radius-inner)] py-2.5 text-sm font-semibold transition-colors",
                 options.danger
                   ? "bg-red-500 text-white hover:bg-red-600"
                   : "bg-btn text-btn-ink hover:opacity-90",

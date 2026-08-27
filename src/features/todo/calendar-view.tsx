@@ -180,7 +180,7 @@ export function CalendarView({ tasks, onOpen, onCreateOn }: CalendarViewProps) {
               if (dayView) onCreateOn(dayView);
               setDayView(null);
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
+            className="flex w-full items-center justify-center gap-2 rounded-[var(--radius-inner)] bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
             Thêm task ngày này

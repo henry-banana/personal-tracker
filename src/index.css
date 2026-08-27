@@ -38,7 +38,7 @@ html.theme-ready {
     --color-surface-muted: #f4f4f5; /* chips, icon wells */
     --color-surface-sunken: #fafafa; /* inputs, calendar cells */
     --color-surface-hover: #e4e4e7; /* hovered muted surfaces */
-    --color-shell: rgba(255, 255, 255, 0.62); /* translucent container */
+    --color-shell: rgba(255, 255, 255, 0.82); /* translucent container */
     --color-line: rgba(228, 228, 231, 0.7);
 
     --color-ink: #18181b;
@@ -62,8 +62,8 @@ html.theme-ready {
     --color-accent-strong: color-mix(in srgb, var(--color-accent) 78%, #000000);
 
     /* Consistent rounding scale: outer container wraps slightly smaller cards. */
-    --radius-card: 1.75rem;
-    --radius-inner: 1rem;
+    --radius-card: 0.875rem;
+    --radius-inner: 0.625rem;
     --radius-pill: 999px;
 
     /* Enter/exit animations for Radix popovers, selects, dropdowns. */
@@ -147,7 +147,7 @@ html.theme-ready {
     --color-surface-muted: #27272a;
     --color-surface-sunken: #232327;
     --color-surface-hover: #3f3f46;
-    --color-shell: rgba(18, 18, 21, 0.6);
+    --color-shell: rgba(18, 18, 21, 0.78);
     --color-line: rgba(63, 63, 70, 0.6);
 
     --color-ink: #fafafa;

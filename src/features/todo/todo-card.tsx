@@ -63,7 +63,7 @@ export function TodoCard({ className, archiveDays }: TodoCardProps) {
           <button
             type="button"
             onClick={() => openNew()}
-            className="flex h-9 items-center gap-1.5 rounded-full bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
+            className="flex h-9 items-center gap-1.5 rounded-[var(--radius-inner)] bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
             Thêm task

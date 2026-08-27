@@ -119,7 +119,7 @@ export function GroupManagerDialog({
           <button
             type="button"
             onClick={addGroup}
-            className="flex h-[42px] shrink-0 items-center gap-1.5 rounded-full bg-btn px-4 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
+            className="flex h-[42px] shrink-0 items-center gap-1.5 rounded-[var(--radius-inner)] bg-btn px-4 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
             Thêm

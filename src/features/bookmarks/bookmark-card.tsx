@@ -1,16 +1,22 @@
-import { Bookmark as BookmarkIcon, Plus, Settings2, X } from "lucide-react";
+import {
+  Bookmark as BookmarkIcon,
+  ExternalLink,
+  Plus,
+  Settings2,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { BentoCard } from "../../components/bento-card";
 import { useConfirm } from "../../components/confirm-dialog";
 import { IconButton } from "../../components/icon-button";
 import { Tooltip } from "../../components/ui/tooltip";
 import { cn } from "../../lib/cn";
-import { faviconUrl, hostname } from "../../lib/url";
+import { hostname } from "../../lib/url";
 import { BookmarkDialog } from "./bookmark-dialog";
 import { GroupManagerDialog } from "./group-manager-dialog";
 import { useBookmarks } from "./use-bookmarks";
 
-/** Resource library: favicon list with optional group filtering. */
+/** Resource library with optional group filtering. */
 export function BookmarkCard({ className }: { className?: string }) {
   const {
     bookmarks,
@@ -53,7 +59,7 @@ export function BookmarkCard({ className }: { className?: string }) {
           <button
             type="button"
             onClick={() => setDialogOpen(true)}
-            className="flex h-9 items-center gap-1.5 rounded-full bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
+            className="flex h-9 items-center gap-1.5 rounded-[var(--radius-inner)] bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
             Thêm resource
@@ -102,16 +108,9 @@ export function BookmarkCard({ className }: { className?: string }) {
                   rel="noreferrer"
                   className="flex min-w-0 flex-1 items-center gap-3"
                 >
-                  <img
-                    src={faviconUrl(b.url)}
-                    alt=""
-                    width={20}
-                    height={20}
-                    className="h-5 w-5 shrink-0 rounded"
-                    onError={(e) => {
-                      e.currentTarget.style.visibility = "hidden";
-                    }}
-                  />
+                  <span className="grid h-7 w-7 shrink-0 place-items-center rounded-[var(--radius-inner)] bg-surface-muted text-ink-soft">
+                    <ExternalLink size={14} aria-hidden="true" />
+                  </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[13px] font-medium text-ink">
                       {b.title}

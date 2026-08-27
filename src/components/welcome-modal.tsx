@@ -28,7 +28,7 @@ export function WelcomeModal({ open, onClose }: WelcomeModalProps) {
         <button
           type="button"
           onClick={onClose}
-          className="w-full rounded-full bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
+          className="w-full rounded-[var(--radius-inner)] bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
         >
           Bắt đầu khám phá
         </button>

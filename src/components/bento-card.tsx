@@ -30,7 +30,7 @@ export function BentoCard({
   return (
     <section
       className={cn(
-        "flex min-h-0 flex-col rounded-[var(--radius-card)] bg-surface",
+        "flex min-h-0 flex-col rounded-[var(--radius-card)] border border-line bg-surface",
         className,
       )}
     >
