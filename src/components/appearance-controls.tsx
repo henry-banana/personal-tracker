@@ -1,3 +1,4 @@
+import { uiText } from "../lib/messages";
 import { Check } from "lucide-react";
 import { cn } from "../lib/cn";
 import { publicAssetUrl } from "../lib/public-asset";
@@ -13,7 +14,6 @@ import {
 import { ColorPickerPopover } from "./ui/color-picker";
 import { FieldLabel } from "./form-controls";
 import { Tooltip } from "./ui/tooltip";
-
 /**
  * Rainbow shown on the "pick a custom colour" swatch. A horizontal linear
  * sweep reads clearly at any aspect ratio (a conic gradient collapses to one
@@ -21,14 +21,12 @@ import { Tooltip } from "./ui/tooltip";
  */
 const RAINBOW =
   "linear-gradient(90deg, #f43f5e, #fb923c, #f59e0b, #84cc16, #10b981, #3b82f6, #8b5cf6, #ec4899)";
-
 type AppearanceControlsProps = {
   settings: Settings;
   onUpdate: (patch: Partial<Settings>) => void;
   /** Toggled true/false while a native colour picker is open (for live preview). */
   onPreview?: (active: boolean) => void;
 };
-
 /** Primary-colour and background pickers, each with a custom-colour option. */
 export function AppearanceControls({
   settings,
@@ -37,18 +35,17 @@ export function AppearanceControls({
 }: AppearanceControlsProps) {
   const customPrimary = isCustomColor(settings.primary, PRIMARY_COLORS);
   const customBg = isCustomColor(settings.background, BACKGROUND_COLORS);
-
   return (
     <>
       <div>
-        <FieldLabel>Màu chủ đạo</FieldLabel>
+        <FieldLabel>{uiText("Màu chủ đạo")}</FieldLabel>
         <div className="flex flex-wrap gap-2">
           {PRIMARY_COLORS.map((c) => (
-            <Tooltip key={c.value} label={c.name}>
+            <Tooltip key={c.value} label={uiText(c.name)}>
               <ColorSwatch
                 color={c.value}
                 selected={settings.primary === c.value}
-                ariaLabel={c.name}
+                ariaLabel={uiText(c.name)}
                 onClick={() => onUpdate({ primary: c.value })}
               />
             </Tooltip>
@@ -64,15 +61,15 @@ export function AppearanceControls({
       </div>
 
       <div>
-        <FieldLabel>Nền</FieldLabel>
+        <FieldLabel>{uiText("Nền")}</FieldLabel>
         {/* Photos, solid colours, and a custom picker share one tile grid.
             Height shows ~2.5 rows so the next row peeks — a clear scroll hint. */}
         <div className="grid max-h-64 grid-cols-3 gap-2 overflow-y-auto p-0.5">
           {BACKGROUNDS.map((bg) => (
-            <Tooltip key={bg.name} label={bg.name}>
+            <Tooltip key={uiText(bg.name)} label={uiText(bg.name)}>
               <button
                 type="button"
-                aria-label={bg.name}
+                aria-label={uiText(bg.name)}
                 onClick={() => onUpdate({ background: bg.value })}
                 className={cn(
                   "relative aspect-video overflow-hidden rounded-[var(--radius-inner)] bg-surface-muted ring-2 transition",
@@ -84,12 +81,12 @@ export function AppearanceControls({
                 {bg.value ? (
                   <img
                     src={publicAssetUrl(bg.value)}
-                    alt={bg.name}
+                    alt={uiText(bg.name)}
                     className="h-full w-full object-cover"
                   />
                 ) : (
                   <span className="grid h-full place-items-center text-[11px] font-medium text-ink-soft">
-                    {bg.name}
+                    {uiText(bg.name)}
                   </span>
                 )}
               </button>
@@ -97,10 +94,10 @@ export function AppearanceControls({
           ))}
 
           {BACKGROUND_COLORS.map((c) => (
-            <Tooltip key={c.value} label={c.name}>
+            <Tooltip key={c.value} label={uiText(c.name)}>
               <button
                 type="button"
-                aria-label={`Nền ${c.name}`}
+                aria-label={uiText(`Nền ${c.name}`)}
                 onClick={() => onUpdate({ background: c.value })}
                 style={{ backgroundColor: c.value }}
                 className={cn(
@@ -130,7 +127,6 @@ export function AppearanceControls({
     </>
   );
 }
-
 /** A round preset swatch; shows a check when it is the active colour. */
 function ColorSwatch({
   color,
@@ -159,7 +155,6 @@ function ColorSwatch({
     </button>
   );
 }
-
 /**
  * A native colour input behind a labelled "Tuỳ chỉnh" surface. Shows a rainbow
  * until a custom colour is active, then fills with the chosen colour. `className`
@@ -179,10 +174,14 @@ function CustomColorControl({
   className?: string;
 }) {
   return (
-    <ColorPickerPopover value={value} onChange={onChange} onOpenChange={onPreview}>
+    <ColorPickerPopover
+      value={value}
+      onChange={onChange}
+      onOpenChange={onPreview}
+    >
       <button
         type="button"
-        aria-label="Màu tuỳ chỉnh"
+        aria-label={uiText("Màu tuỳ chỉnh")}
         style={active ? { backgroundColor: value } : { background: RAINBOW }}
         className={cn(
           "relative grid cursor-pointer place-items-center text-[11px] font-semibold text-white ring-2 transition [text-shadow:0_1px_2px_rgba(0,0,0,0.55)]",
@@ -190,7 +189,7 @@ function CustomColorControl({
           className,
         )}
       >
-        Tuỳ chỉnh
+        {uiText("Tuỳ chỉnh")}
       </button>
     </ColorPickerPopover>
   );

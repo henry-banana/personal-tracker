@@ -1,3 +1,4 @@
+import { uiText } from "../../lib/messages";
 import {
   Bookmark as BookmarkIcon,
   ExternalLink,
@@ -15,7 +16,6 @@ import { hostname } from "../../lib/url";
 import { BookmarkDialog } from "./bookmark-dialog";
 import { GroupManagerDialog } from "./group-manager-dialog";
 import { useBookmarks } from "./use-bookmarks";
-
 /** Resource library with optional group filtering. */
 export function BookmarkCard({ className }: { className?: string }) {
   const {
@@ -31,23 +31,20 @@ export function BookmarkCard({ className }: { className?: string }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [groupMgrOpen, setGroupMgrOpen] = useState(false);
   const confirm = useConfirm();
-
   async function handleRemoveGroup(name: string) {
     const ok = await confirm({
-      title: `Xoá nhóm "${name}"?`,
-      message: 'Resource trong nhóm sẽ chuyển về "Không nhóm".',
-      confirmLabel: "Xoá nhóm",
+      title: uiText(`Xoá nhóm "${name}"?`),
+      message: uiText('Resource trong nhóm sẽ chuyển về "Không nhóm".'),
+      confirmLabel: uiText("Xoá nhóm"),
       danger: true,
     });
     if (!ok) return;
     removeGroup(name);
     if (filter === name) setFilter("");
   }
-
   const visible = filter
     ? bookmarks.filter((b) => b.group === filter)
     : bookmarks;
-
   return (
     <BentoCard
       icon={BookmarkIcon}
@@ -62,10 +59,10 @@ export function BookmarkCard({ className }: { className?: string }) {
             className="flex h-9 items-center gap-1.5 rounded-[var(--radius-inner)] bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
-            Thêm resource
+            {uiText("Thêm resource")}
           </button>
           <IconButton
-            aria-label="Quản lý nhóm"
+            aria-label={uiText("Quản lý nhóm")}
             onClick={() => setGroupMgrOpen(true)}
           >
             <Settings2 size={18} />
@@ -77,7 +74,7 @@ export function BookmarkCard({ className }: { className?: string }) {
         {groups.length > 0 ? (
           <div className="mb-3 flex gap-1.5 overflow-x-auto">
             <FilterChip active={!filter} onClick={() => setFilter("")}>
-              Tất cả
+              {uiText("Tất cả")}
             </FilterChip>
             {groups.map((g) => (
               <FilterChip
@@ -94,7 +91,7 @@ export function BookmarkCard({ className }: { className?: string }) {
         <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto">
           {visible.length === 0 ? (
             <p className="grid flex-1 place-items-center text-sm text-ink-faint">
-              Chưa có resource nào
+              {uiText("Chưa có resource nào")}
             </p>
           ) : (
             visible.map((b) => (
@@ -125,10 +122,10 @@ export function BookmarkCard({ className }: { className?: string }) {
                     </span>
                   ) : null}
                 </a>
-                <Tooltip label="Xóa resource">
+                <Tooltip label={uiText("Xóa resource")}>
                   <button
                     type="button"
-                    aria-label="Xóa resource"
+                    aria-label={uiText("Xóa resource")}
                     onClick={() => removeBookmark(b.id)}
                     className="grid h-7 w-0 shrink-0 place-items-center overflow-hidden rounded-full text-ink-faint opacity-0 transition-all duration-200 hover:bg-surface-hover hover:text-ink group-hover:ml-2 group-hover:w-7 group-hover:opacity-100"
                   >
@@ -159,7 +156,6 @@ export function BookmarkCard({ className }: { className?: string }) {
     </BentoCard>
   );
 }
-
 function FilterChip({
   active,
   onClick,

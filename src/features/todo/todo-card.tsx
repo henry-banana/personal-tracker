@@ -1,3 +1,4 @@
+import { uiText } from "../../lib/messages";
 import { Calendar, KanbanSquare, ListChecks, Plus } from "lucide-react";
 import { useState } from "react";
 import { BentoCard } from "../../components/bento-card";
@@ -9,13 +10,18 @@ import { TaskDetailDialog } from "./task-detail-dialog";
 import { TaskDialog } from "./task-dialog";
 import type { Task, TaskStatus } from "./task-types";
 import { useTodos } from "./use-todos";
-
+import { TaskPlanningDialog } from "../planning/dialogs";
+import { today } from "../planning/engine";
+import { useI18n } from "../../lib/i18n";
 type View = "board" | "calendar";
-
-type TodoCardProps = { className?: string; archiveDays: number };
-
+type TodoCardProps = {
+  className?: string;
+  archiveDays: number;
+};
 /** Main 2x2 tracker: kanban board or calendar over the same task list. */
 export function TodoCard({ className, archiveDays }: TodoCardProps) {
+  const { t } = useI18n();
+  const [planningId, setPlanningId] = useState<string | null>(null);
   const { tasks, byStatus, addTask, patchTask, reorderTasks, removeTask } =
     useTodos();
   const [view, setView] = useLocalStorage<View>("pt.todo-view", "board");
@@ -25,19 +31,22 @@ export function TodoCard({ className, archiveDays }: TodoCardProps) {
   const detailTask = detailId
     ? (tasks.find((t) => t.id === detailId) ?? null)
     : null;
-
-  function openNew(opts: { dueDate?: string; status?: TaskStatus } = {}) {
+  function openNew(
+    opts: {
+      dueDate?: string;
+      status?: TaskStatus;
+    } = {},
+  ) {
     setCreateTask({
       ...BLANK,
       dueDate: opts.dueDate ?? "",
       status: opts.status ?? "todo",
     } as Task);
   }
-
   return (
     <BentoCard
       icon={ListChecks}
-      title="Todo"
+      title={t("Công việc", "Tasks")}
       scrollBody={false}
       className={className}
       action={
@@ -54,10 +63,12 @@ export function TodoCard({ className, archiveDays }: TodoCardProps) {
             <ViewTab
               active={view === "calendar"}
               onClick={() => setView("calendar")}
-              label="Lịch"
+              label={t("Lịch deadline", "Deadlines")}
             >
               <Calendar size={15} />
-              <span className="hidden sm:inline">Lịch</span>
+              <span className="hidden sm:inline">
+                {t("Lịch deadline", "Deadlines")}
+              </span>
             </ViewTab>
           </div>
           <button
@@ -66,7 +77,7 @@ export function TodoCard({ className, archiveDays }: TodoCardProps) {
             className="flex h-9 items-center gap-1.5 rounded-[var(--radius-inner)] bg-btn pl-3 pr-3.5 text-[13px] font-semibold text-btn-ink transition-colors hover:opacity-90"
           >
             <Plus size={16} />
-            Thêm task
+            {uiText("Thêm task")}
           </button>
         </>
       }
@@ -97,13 +108,23 @@ export function TodoCard({ className, archiveDays }: TodoCardProps) {
       <TaskDetailDialog
         task={detailTask}
         onClose={() => setDetailId(null)}
-        onPatch={(patch) => detailId && patchTask(detailId, patch)}
-        onDelete={() => detailId && removeTask(detailId)}
+        onPatch={(patch) => (detailId ? patchTask(detailId, patch) : false)}
+        onDelete={() => (detailId ? removeTask(detailId) : false)}
+        onPlan={() => {
+          setPlanningId(detailId);
+          setDetailId(null);
+        }}
       />
+      {planningId && (
+        <TaskPlanningDialog
+          id={planningId}
+          date={today()}
+          onClose={() => setPlanningId(null)}
+        />
+      )}
     </BentoCard>
   );
 }
-
 const BLANK = {
   id: "",
   title: "",
@@ -112,7 +133,6 @@ const BLANK = {
   status: "todo" as const,
   createdAt: 0,
 };
-
 function ViewTab({
   active,
   onClick,

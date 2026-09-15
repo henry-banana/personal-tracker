@@ -1,14 +1,13 @@
+import { uiText } from "../../lib/messages";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { TextField } from "../../components/form-controls";
 import { cn } from "../../lib/cn";
-
 type GroupPickerProps = {
   groups: string[];
   value: string;
   onChange: (group: string) => void;
 };
-
 /**
  * Pick an existing group or create a new one. When no groups exist yet, only
  * the "create" input shows — there is no list to choose from.
@@ -17,17 +16,15 @@ export function GroupPicker({ groups, value, onChange }: GroupPickerProps) {
   // A typed value that isn't an existing group counts as "creating new".
   const isNew = value !== "" && !groups.includes(value);
   const [creating, setCreating] = useState(isNew);
-
   if (groups.length === 0) {
     return (
       <TextField
-        placeholder="Tạo nhóm mới (không bắt buộc)"
+        placeholder={uiText("Tạo nhóm mới (không bắt buộc)")}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
     );
   }
-
   return (
     <div className="space-y-2.5">
       <div className="flex flex-wrap gap-1.5">
@@ -38,7 +35,7 @@ export function GroupPicker({ groups, value, onChange }: GroupPickerProps) {
             onChange("");
           }}
         >
-          Không nhóm
+          {uiText("Không nhóm")}
         </Chip>
         {groups.map((g) => (
           <Chip
@@ -60,13 +57,13 @@ export function GroupPicker({ groups, value, onChange }: GroupPickerProps) {
           }}
         >
           <Plus size={13} />
-          Nhóm mới
+          {uiText("Nhóm mới")}
         </Chip>
       </div>
       {creating ? (
         <TextField
           autoFocus
-          placeholder="Tên nhóm mới"
+          placeholder={uiText("Tên nhóm mới")}
           value={isNew ? value : ""}
           onChange={(e) => onChange(e.target.value)}
         />
@@ -74,7 +71,6 @@ export function GroupPicker({ groups, value, onChange }: GroupPickerProps) {
     </div>
   );
 }
-
 function Chip({
   active,
   onClick,
@@ -90,7 +86,9 @@ function Chip({
       onClick={onClick}
       className={cn(
         "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-        active ? "bg-accent-soft text-accent-ink" : "bg-surface-muted text-ink-soft hover:bg-surface-hover",
+        active
+          ? "bg-accent-soft text-accent-ink"
+          : "bg-surface-muted text-ink-soft hover:bg-surface-hover",
       )}
     >
       {children}

@@ -1,3 +1,4 @@
+import { uiText } from "../../lib/messages";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { CalendarClock, X } from "lucide-react";
@@ -7,7 +8,6 @@ import { toIsoDate } from "../../lib/date";
 import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { Tooltip } from "./tooltip";
-
 type DatePickerProps = {
   /** ISO yyyy-mm-dd, or "" for no date. */
   value: string;
@@ -16,16 +16,14 @@ type DatePickerProps = {
   /** Show a "clear" action when a date is set. */
   clearable?: boolean;
 };
-
 export function DatePicker({
   value,
   onChange,
-  placeholder = "Chọn ngày",
+  placeholder = uiText("Chọn ngày"),
   clearable = true,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false);
   const selected = value ? new Date(value + "T00:00:00") : undefined;
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       {/* One field block: the trigger fills it, the clear "X" tucks in at the end. */}
@@ -46,15 +44,17 @@ export function DatePicker({
           >
             <CalendarClock size={15} className="shrink-0 text-ink-faint" />
             <span className="flex-1 truncate text-left">
-              {selected ? format(selected, "dd/MM/yyyy", { locale: vi }) : placeholder}
+              {selected
+                ? format(selected, "dd/MM/yyyy", { locale: vi })
+                : placeholder}
             </span>
           </button>
         </PopoverTrigger>
         {clearable && value ? (
-          <Tooltip label="Bỏ ngày">
+          <Tooltip label={uiText("Bỏ ngày")}>
             <button
               type="button"
-              aria-label="Bỏ ngày"
+              aria-label={uiText("Bỏ ngày")}
               onClick={() => onChange("")}
               className="grid shrink-0 self-stretch place-items-center px-2.5 text-ink-faint transition-colors hover:text-ink"
             >
