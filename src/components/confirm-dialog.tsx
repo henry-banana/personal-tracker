@@ -1,3 +1,4 @@
+import { uiText } from "../lib/messages";
 import {
   createContext,
   useCallback,
@@ -8,7 +9,6 @@ import {
 } from "react";
 import { cn } from "../lib/cn";
 import { Modal } from "./modal";
-
 type ConfirmOptions = {
   title: string;
   message?: string;
@@ -16,38 +16,31 @@ type ConfirmOptions = {
   cancelLabel?: string;
   danger?: boolean;
 };
-
 type ConfirmFn = (opts: ConfirmOptions) => Promise<boolean>;
-
 const ConfirmContext = createContext<ConfirmFn | null>(null);
-
 /** Imperative confirm: `if (await confirm({...})) doThing()`. */
 export function useConfirm(): ConfirmFn {
   const ctx = useContext(ConfirmContext);
   if (!ctx) throw new Error("useConfirm must be used within <ConfirmProvider>");
   return ctx;
 }
-
 export function ConfirmProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<{ open: boolean; options: ConfirmOptions }>(
-    { open: false, options: { title: "" } },
-  );
+  const [state, setState] = useState<{
+    open: boolean;
+    options: ConfirmOptions;
+  }>({ open: false, options: { title: "" } });
   const resolver = useRef<(v: boolean) => void>(() => {});
-
   const confirm = useCallback<ConfirmFn>((options) => {
     setState({ open: true, options });
     return new Promise<boolean>((resolve) => {
       resolver.current = resolve;
     });
   }, []);
-
   function settle(result: boolean) {
     resolver.current(result);
     setState((s) => ({ ...s, open: false }));
   }
-
   const { open, options } = state;
-
   return (
     <ConfirmContext.Provider value={confirm}>
       {children}
@@ -64,7 +57,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
               onClick={() => settle(false)}
               className="flex-1 rounded-[var(--radius-inner)] bg-surface-muted py-2.5 text-sm font-semibold text-ink-soft transition-colors hover:bg-surface-hover"
             >
-              {options.cancelLabel ?? "Huỷ"}
+              {options.cancelLabel ?? uiText("Huỷ")}
             </button>
             <button
               type="button"
@@ -76,7 +69,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
                   : "bg-btn text-btn-ink hover:opacity-90",
               )}
             >
-              {options.confirmLabel ?? "Xác nhận"}
+              {options.confirmLabel ?? uiText("Xác nhận")}
             </button>
           </div>
         </div>

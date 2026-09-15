@@ -1,3 +1,4 @@
+import { uiText } from "../../lib/messages";
 import { Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
@@ -8,14 +9,13 @@ import { Modal } from "../../components/modal";
 import { DatePicker } from "../../components/ui/date-picker";
 import { TaskChecklist } from "./task-checklist";
 import { STATUS_META, TASK_STATUSES, type Task } from "./task-types";
-
 type TaskDetailDialogProps = {
   task: Task | null;
   onClose: () => void;
-  onPatch: (patch: Partial<Task>) => void;
-  onDelete: () => void;
+  onPatch: (patch: Partial<Task>) => boolean | void;
+  onDelete: () => boolean | void;
+  onPlan?: () => void;
 };
-
 /**
  * Trello-style "card back": each field edits inline and saves immediately.
  * A pinned header (status, title, due date) sits above a two-column body —
@@ -27,13 +27,13 @@ export function TaskDetailDialog({
   onClose,
   onPatch,
   onDelete,
+  onPlan,
 }: TaskDetailDialogProps) {
   const confirm = useConfirm();
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingDesc, setEditingDesc] = useState(false);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
-
   // Re-seed local buffers whenever a different task opens.
   useEffect(() => {
     if (task) {
@@ -43,36 +43,34 @@ export function TaskDetailDialog({
       setEditingDesc(false);
     }
   }, [task?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
   if (!task) {
     return <Modal open={false} title="" onClose={onClose} children={null} />;
   }
-
   function commitTitle() {
     const clean = title.trim();
-    if (clean && clean !== task!.title) onPatch({ title: clean });
-    else setTitle(task!.title);
+    if (clean && clean !== task!.title) {
+      if (onPatch({ title: clean }) === false) return;
+    } else setTitle(task!.title);
     setEditingTitle(false);
   }
-
   function commitDesc() {
-    if (desc !== task!.description) onPatch({ description: desc });
+    if (desc !== task!.description && onPatch({ description: desc }) === false)
+      return;
     setEditingDesc(false);
   }
-
   async function handleDelete() {
     const ok = await confirm({
-      title: "Xoá task?",
-      message: `"${task!.title}" sẽ bị xoá vĩnh viễn, không khôi phục được.`,
-      confirmLabel: "Xoá",
+      title: uiText("Xoá task?"),
+      message: uiText(
+        `"${task!.title}" sẽ bị xoá vĩnh viễn, không khôi phục được.`,
+      ),
+      confirmLabel: uiText("Xoá"),
       danger: true,
     });
     if (ok) {
-      onDelete();
-      onClose();
+      if (onDelete() !== false) onClose();
     }
   }
-
   // Status pills live in the modal header (replacing a redundant "Chi tiết" title).
   const statusPills = (
     <div className="flex flex-wrap gap-1.5">
@@ -102,18 +100,16 @@ export function TaskDetailDialog({
       })}
     </div>
   );
-
   const deleteAction = (
     <IconButton
-      aria-label="Xoá task"
-      title="Xoá task"
+      aria-label={uiText("Xoá task")}
+      title={uiText("Xoá task")}
       onClick={handleDelete}
       className="bg-transparent text-ink-faint hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/15"
     >
       <Trash2 size={16} />
     </IconButton>
   );
-
   return (
     <Modal
       open
@@ -123,6 +119,15 @@ export function TaskDetailDialog({
       onClose={onClose}
     >
       <div className="space-y-5">
+        {onPlan && (
+          <button
+            type="button"
+            onClick={onPlan}
+            className="rounded-[var(--radius-inner)] bg-btn px-3 py-2 text-sm font-semibold text-btn-ink"
+          >
+            {uiText("Xếp lịch / Calendar")}
+          </button>
+        )}
         {/* Title — click to edit inline. */}
         {editingTitle ? (
           <input
@@ -154,19 +159,19 @@ export function TaskDetailDialog({
         {/* Due date — change saves immediately. */}
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
-            Hạn chót
+            {uiText("Hạn chót")}
           </p>
           <DatePicker
             value={task.dueDate}
             onChange={(iso) => onPatch({ dueDate: iso })}
-            placeholder="Thêm hạn chót"
+            placeholder={uiText("Thêm hạn chót")}
           />
         </div>
 
         {/* Description — click to edit inline. */}
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
-            Mô tả
+            {uiText("Mô tả")}
           </p>
           {editingDesc ? (
             <textarea
@@ -182,7 +187,7 @@ export function TaskDetailDialog({
                   setEditingDesc(false);
                 }
               }}
-              placeholder="Thêm chi tiết..."
+              placeholder={uiText("Thêm chi tiết...")}
               className="w-full resize-none rounded-[var(--radius-inner)] bg-surface-sunken p-3 text-sm leading-relaxed text-ink outline-none ring-2 ring-accent/40 placeholder:text-ink-faint"
             />
           ) : (
@@ -194,7 +199,7 @@ export function TaskDetailDialog({
                 task.description ? "text-ink" : "text-ink-faint",
               )}
             >
-              {task.description || "Thêm chi tiết..."}
+              {task.description || uiText("Thêm chi tiết...")}
             </button>
           )}
         </div>

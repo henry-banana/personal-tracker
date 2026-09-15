@@ -1,5 +1,6 @@
 import "react-day-picker/style.css";
-import { vi } from "date-fns/locale";
+import { vi, enGB } from "date-fns/locale";
+import { uiLocale } from '../../lib/messages';
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker, type DayPickerProps } from "react-day-picker";
 import { cn } from "../../lib/cn";
@@ -8,7 +9,8 @@ import { cn } from "../../lib/cn";
 export function Calendar({ className, ...props }: DayPickerProps) {
   return (
     <DayPicker
-      locale={vi}
+      locale={uiLocale()==='vi-VN'?vi:enGB}
+      weekStartsOn={1}
       showOutsideDays
       className={cn("rdp-themed", className)}
       components={{

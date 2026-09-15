@@ -1,3 +1,4 @@
+import { uiText } from "../../lib/messages";
 import { useEffect, useMemo, useState } from "react";
 import {
   DndContext,
@@ -31,7 +32,6 @@ import {
   type TaskStatus,
 } from "./task-types";
 import { isArchivedDone } from "./use-todos";
-
 type KanbanBoardProps = {
   byStatus: Record<TaskStatus, Task[]>;
   onReorder: (tasks: Task[]) => void;
@@ -41,14 +41,11 @@ type KanbanBoardProps = {
   /** Auto-hide done tasks older than this many days (0 = never). */
   archiveDays: number;
 };
-
 type Columns = Record<TaskStatus, string[]>;
-
 const columnsFromStatus = (byStatus: Record<TaskStatus, Task[]>): Columns =>
   Object.fromEntries(
     TASK_STATUSES.map((s) => [s, byStatus[s].map((t) => t.id)]),
   ) as Columns;
-
 /**
  * Four-column board with full sortable drag-and-drop (dnd-kit): cards reorder
  * within a column and move across columns, with siblings shifting to open a
@@ -65,18 +62,15 @@ export function KanbanBoard({
   const [columns, setColumns] = useState<Columns>(() =>
     columnsFromStatus(byStatus),
   );
-
   const taskMap = useMemo(() => {
     const m = new Map<string, Task>();
     for (const s of TASK_STATUSES) for (const t of byStatus[s]) m.set(t.id, t);
     return m;
   }, [byStatus]);
-
   // Re-sync from props when not mid-drag (e.g. add/edit/delete elsewhere).
   useEffect(() => {
     if (!activeId) setColumns(columnsFromStatus(byStatus));
   }, [byStatus, activeId]);
-
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, {
@@ -86,7 +80,6 @@ export function KanbanBoard({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
-
   /** Which column an id belongs to (a card id, or a column id itself). */
   function findColumn(id: string): TaskStatus | null {
     if ((TASK_STATUSES as readonly string[]).includes(id)) {
@@ -94,7 +87,6 @@ export function KanbanBoard({
     }
     return TASK_STATUSES.find((s) => columns[s].includes(id)) ?? null;
   }
-
   /** Flatten columns into an ordered task list with each card's new status. */
   function persist(next: Columns) {
     const flat: Task[] = [];
@@ -106,11 +98,9 @@ export function KanbanBoard({
     }
     onReorder(flat);
   }
-
   function handleDragStart(e: DragStartEvent) {
     setActiveId(e.active.id as string);
   }
-
   // Move the dragged card into the hovered column live, so siblings shift.
   function handleDragOver(e: DragOverEvent) {
     const { active, over } = e;
@@ -118,7 +108,6 @@ export function KanbanBoard({
     const from = findColumn(active.id as string);
     const to = findColumn(over.id as string);
     if (!from || !to || from === to) return;
-
     setColumns((prev) => {
       const overItems = prev[to];
       const overIndex = overItems.indexOf(over.id as string);
@@ -134,7 +123,6 @@ export function KanbanBoard({
       };
     });
   }
-
   function handleDragEnd(e: DragEndEvent) {
     const { active, over } = e;
     setActiveId(null);
@@ -142,7 +130,6 @@ export function KanbanBoard({
     const from = findColumn(active.id as string);
     const to = findColumn(over.id as string);
     if (!from || !to) return;
-
     let next = columns;
     if (from === to) {
       const items = columns[from];
@@ -155,9 +142,7 @@ export function KanbanBoard({
     }
     persist(next);
   }
-
   const activeTask = activeId ? taskMap.get(activeId) : null;
-
   return (
     <DndContext
       sensors={sensors}
@@ -186,7 +171,6 @@ export function KanbanBoard({
     </DndContext>
   );
 }
-
 type ColumnProps = {
   status: TaskStatus;
   ids: string[];
@@ -195,7 +179,6 @@ type ColumnProps = {
   onAddTask: (status: TaskStatus) => void;
   archiveDays: number;
 };
-
 function Column({
   status,
   ids,
@@ -208,7 +191,6 @@ function Column({
   // The column id doubles as a droppable so empty columns still accept drops.
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const [showArchived, setShowArchived] = useState(false);
-
   // In Done, fold away tasks completed long ago so the board stays light.
   // They stay in storage and on the board model — just hidden until revealed.
   const archivedIds =
@@ -222,7 +204,6 @@ function Column({
     archivedIds.length && !showArchived
       ? ids.filter((id) => !archivedIds.includes(id))
       : ids;
-
   return (
     <div
       ref={setNodeRef}
@@ -238,7 +219,10 @@ function Column({
           {ids.length - archivedIds.length}
         </span>
       </div>
-      <SortableContext items={visibleIds} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={visibleIds}
+        strategy={verticalListSortingStrategy}
+      >
         <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-0.5">
           {visibleIds.map((id) => {
             const task = taskMap.get(id);
@@ -259,8 +243,10 @@ function Column({
           className="mt-1.5 shrink-0 rounded-[0.6rem] px-1.5 py-1 text-left text-[11px] font-medium text-ink-faint transition-colors hover:bg-surface-hover hover:text-ink-soft"
         >
           {showArchived
-            ? "Ẩn bớt task cũ"
-            : `+ ${archivedIds.length} task cũ (đã xong > ${archiveDays} ngày)`}
+            ? uiText("Ẩn bớt task cũ")
+            : uiText(
+                `+ ${archivedIds.length} task cũ (đã xong > ${archiveDays} ngày)`,
+              )}
         </button>
       ) : null}
       <button
@@ -269,12 +255,11 @@ function Column({
         className="mt-1.5 flex w-full shrink-0 items-center gap-1.5 rounded-[0.85rem] px-2 py-2 text-left text-[13px] font-medium text-ink-faint transition-colors hover:bg-surface-hover hover:text-ink-soft"
       >
         <Plus size={15} className="shrink-0" />
-        Thêm task
+        {uiText("Thêm task")}
       </button>
     </div>
   );
 }
-
 function SortableTaskCard({
   task,
   onClick,
@@ -282,8 +267,14 @@ function SortableTaskCard({
   task: Task;
   onClick: () => void;
 }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: task.id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
   return (
     <button
       ref={setNodeRef}
@@ -303,7 +294,6 @@ function SortableTaskCard({
     </button>
   );
 }
-
 /** Visual content of a task card, shared by the column items and drag overlay. */
 function TaskCardBody({ task, overlay }: { task: Task; overlay?: boolean }) {
   const due = dueState(task.dueDate);
@@ -354,7 +344,6 @@ function TaskCardBody({ task, overlay }: { task: Task; overlay?: boolean }) {
       ) : null}
     </>
   );
-
   if (overlay) {
     return (
       <div className="w-[160px] cursor-grabbing rounded-[0.85rem] bg-surface p-3 text-left sm:w-56">

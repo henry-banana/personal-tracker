@@ -1,3 +1,4 @@
+import { uiText } from "../../lib/messages";
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/cn";
 import { isSubmitEnter } from "../../lib/keyboard";
@@ -6,15 +7,13 @@ import { DatePicker } from "../../components/ui/date-picker";
 import { TaskChecklist } from "./task-checklist";
 import { STATUS_META, TASK_STATUSES, type Task } from "./task-types";
 import type { TaskDraft } from "./use-todos";
-
 type TaskDialogProps = {
   open: boolean;
   /** Prefilled fields (status from a column, due date from the calendar). */
   task: Task | null;
   onClose: () => void;
-  onSubmit: (draft: TaskDraft) => void;
+  onSubmit: (draft: TaskDraft) => boolean | void;
 };
-
 const EMPTY: TaskDraft = {
   title: "",
   description: "",
@@ -22,7 +21,6 @@ const EMPTY: TaskDraft = {
   status: "todo",
   checklist: [],
 };
-
 /**
  * Create dialog — same layout as the detail "card back" (status pills, title,
  * due date, description, checklist) but fields are plain inputs gathered into a
@@ -30,7 +28,6 @@ const EMPTY: TaskDraft = {
  */
 export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
   const [draft, setDraft] = useState<TaskDraft>(EMPTY);
-
   useEffect(() => {
     if (!open) return;
     setDraft(
@@ -45,13 +42,10 @@ export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
         : EMPTY,
     );
   }, [open, task]);
-
   function submit() {
     if (!draft.title.trim()) return;
-    onSubmit({ ...draft, title: draft.title.trim() });
-    onClose();
+    if (onSubmit({ ...draft, title: draft.title.trim() }) !== false) onClose();
   }
-
   const statusPills = (
     <div className="flex flex-wrap gap-1.5">
       {TASK_STATUSES.map((s) => {
@@ -80,14 +74,13 @@ export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
       })}
     </div>
   );
-
   return (
     <Modal open={open} wide title={statusPills} onClose={onClose}>
       <div className="space-y-5">
         {/* Title. */}
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
-            Tiêu đề
+            {uiText("Tiêu đề")}
           </p>
           <input
             autoFocus
@@ -96,7 +89,7 @@ export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
             onKeyDown={(e) => {
               if (isSubmitEnter(e)) submit();
             }}
-            placeholder="Tên task..."
+            placeholder={uiText("Tên task...")}
             className="w-full rounded-[var(--radius-inner)] bg-surface-muted px-3.5 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-faint focus:bg-surface-sunken focus:ring-2 focus:ring-accent/40"
           />
         </div>
@@ -104,19 +97,19 @@ export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
         {/* Due date. */}
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
-            Hạn chót
+            {uiText("Hạn chót")}
           </p>
           <DatePicker
             value={draft.dueDate}
             onChange={(iso) => setDraft((d) => ({ ...d, dueDate: iso }))}
-            placeholder="Thêm hạn chót"
+            placeholder={uiText("Thêm hạn chót")}
           />
         </div>
 
         {/* Description. */}
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-ink-faint">
-            Mô tả
+            {uiText("Mô tả")}
           </p>
           <textarea
             rows={4}
@@ -124,7 +117,7 @@ export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
             onChange={(e) =>
               setDraft((d) => ({ ...d, description: e.target.value }))
             }
-            placeholder="Thêm chi tiết (không bắt buộc)"
+            placeholder={uiText("Thêm chi tiết (không bắt buộc)")}
             className="w-full resize-none rounded-[var(--radius-inner)] bg-surface-muted p-3 text-sm leading-relaxed text-ink outline-none transition-colors placeholder:text-ink-faint focus:bg-surface-sunken focus:ring-2 focus:ring-accent/40"
           />
         </div>
@@ -142,7 +135,7 @@ export function TaskDialog({ open, task, onClose, onSubmit }: TaskDialogProps) {
           onClick={submit}
           className="w-full rounded-[var(--radius-inner)] bg-btn py-2.5 text-sm font-semibold text-btn-ink transition-colors hover:opacity-90"
         >
-          Thêm task
+          {uiText("Thêm task")}
         </button>
       </div>
     </Modal>

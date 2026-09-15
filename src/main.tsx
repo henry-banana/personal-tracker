@@ -1,37 +1,37 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import "./v2.css";
 import { App } from "./app";
 import { ConfirmProvider } from "./components/confirm-dialog";
 import { TooltipProvider } from "./components/ui/tooltip";
-import { seedSampleDataIfEmpty } from "./lib/sample-data";
-import { applySettings, DEFAULT_SETTINGS, type Settings } from "./lib/settings";
-
-// Apply saved theme/accent/background before first paint to avoid a flash.
+import { TrackerContext } from "./features/tracker/provider";
+import { createStore } from "./features/tracker/persistence";
+import { applySettings, DEFAULT_SETTINGS } from "./lib/settings";
+import { Recovery } from "./features/tracker/recovery";
+const root = createRoot(document.getElementById("root")!);
 try {
-  const raw = window.localStorage.getItem("pt.settings");
-  applySettings(raw ? (JSON.parse(raw) as Settings) : DEFAULT_SETTINGS);
-} catch {
+  const store = createStore(window.localStorage);
+  applySettings(store.getSnapshot().settings);
+  root.render(
+    <StrictMode>
+      <TrackerContext.Provider value={store}>
+        <TooltipProvider delayDuration={200}>
+          <ConfirmProvider>
+            <App />
+          </ConfirmProvider>
+        </TooltipProvider>
+      </TrackerContext.Provider>
+    </StrictMode>,
+  );
+} catch (error) {
   applySettings(DEFAULT_SETTINGS);
+  root.render(
+    <Recovery
+      reason={error instanceof Error ? error.message : "invalid-snapshot"}
+    />,
+  );
 }
-
-// First-ever visit lands on a populated board so the welcome tour has content.
-if (window.localStorage.getItem("pt.welcomed") === null) {
-  seedSampleDataIfEmpty();
-}
-
-// Enable accent cross-fade only after the first paint, so the initial colour
-// is applied instantly (no sweep) but later changes animate.
 requestAnimationFrame(() =>
   document.documentElement.classList.add("theme-ready"),
-);
-
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <TooltipProvider delayDuration={200} skipDelayDuration={300}>
-      <ConfirmProvider>
-        <App />
-      </ConfirmProvider>
-    </TooltipProvider>
-  </StrictMode>,
 );

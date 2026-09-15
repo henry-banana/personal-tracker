@@ -1,3 +1,4 @@
+import { uiLocale } from './messages';
 /** Day-level date helpers shared by the todo board and calendar. */
 
 /**
@@ -20,7 +21,7 @@ export function todayIso(): string {
 export function formatShortDate(iso: string): string {
   if (!iso) return "";
   const d = new Date(iso + "T00:00:00");
-  return `${d.getDate()} Th${d.getMonth() + 1}`;
+  return d.toLocaleDateString(uiLocale(),{day:'numeric',month:'short'});
 }
 
 /** Relative urgency used to colour due-date chips. */

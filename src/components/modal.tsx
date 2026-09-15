@@ -1,10 +1,10 @@
+import { uiText } from "../lib/messages";
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import { useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../lib/cn";
 import { IconButton } from "./icon-button";
-
 type ModalProps = {
   open: boolean;
   /** A string renders as a heading; a node (e.g. status pills) renders as-is. */
@@ -24,10 +24,8 @@ type ModalProps = {
    */
   peek?: boolean;
 };
-
 const FOCUSABLE =
   'a[href],button:not([disabled]),textarea,input,select,[tabindex]:not([tabindex="-1"])';
-
 /**
  * Centered dialog with animated enter/exit. Closes on Escape / backdrop, traps
  * Tab focus inside, locks background scroll, and restores focus to the trigger
@@ -43,7 +41,6 @@ export function Modal({
   peek,
 }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
-
   // Backdrop click closes the dialog — but not while peeking (a colour picker
   // is open) or while any Radix popover/select is open, so dismissing one of
   // those never also tears down the dialog behind it.
@@ -53,7 +50,6 @@ export function Modal({
     }
     onClose();
   };
-
   // Escape closes; Tab cycles within the dialog (skips Radix portals).
   useEffect(() => {
     if (!open) return;
@@ -61,14 +57,14 @@ export function Modal({
       if (e.key === "Escape") {
         // A Radix dropdown (select/date popover) is open — let it consume Esc
         // first; one keypress shouldn't dismiss the whole dialog too.
-        if (document.querySelector("[data-radix-popper-content-wrapper]")) return;
+        if (document.querySelector("[data-radix-popper-content-wrapper]"))
+          return;
         onClose();
       } else if (e.key === "Tab") trapTab(e, dialogRef.current);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
-
   // Lock background scroll, pull focus into the dialog, restore it on close.
   useEffect(() => {
     if (!open) return;
@@ -90,7 +86,6 @@ export function Modal({
       trigger?.focus?.();
     };
   }, [open]);
-
   // Portal to <body> so the fixed overlay always covers the full viewport.
   // The dashboard shell uses backdrop-filter, which makes it a containing
   // block for position:fixed — rendering inline would clip the overlay to it.
@@ -112,7 +107,7 @@ export function Modal({
             ref={dialogRef}
             role="dialog"
             aria-modal="true"
-            aria-label={typeof title === "string" ? title : "Hộp thoại"}
+            aria-label={typeof title === "string" ? title : uiText("Hộp thoại")}
             tabIndex={-1}
             className={cn(
               "max-h-[calc(100dvh-2rem)] w-full overflow-y-auto rounded-[var(--radius-card)] bg-surface p-6 outline-none",
@@ -137,7 +132,7 @@ export function Modal({
               )}
               <div className="flex shrink-0 items-center gap-1.5">
                 {headerAction}
-                <IconButton aria-label="Đóng" onClick={onClose}>
+                <IconButton aria-label={uiText("Đóng")} onClick={onClose}>
                   <X size={18} />
                 </IconButton>
               </div>
@@ -150,7 +145,6 @@ export function Modal({
     document.body,
   );
 }
-
 /**
  * Keep Tab focus inside the dialog. Stays out of the way when focus is in a
  * portaled layer (Radix select/popover render outside the dialog DOM).
@@ -159,12 +153,10 @@ function trapTab(e: KeyboardEvent, container: HTMLElement | null) {
   if (!container) return;
   const active = document.activeElement as HTMLElement | null;
   if (active && !container.contains(active)) return;
-
   const nodes = Array.from(
     container.querySelectorAll<HTMLElement>(FOCUSABLE),
   ).filter((el) => el.offsetParent !== null);
   if (nodes.length === 0) return;
-
   const first = nodes[0];
   const last = nodes[nodes.length - 1];
   if (e.shiftKey && active === first) {
