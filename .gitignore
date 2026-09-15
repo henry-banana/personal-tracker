@@ -1,0 +1,11 @@
+node_modules
+dist
+*.local
+.DS_Store
+
+# TypeScript incremental build cache (máy-cá-nhân, không commit)
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*

@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+/* Dark mode is driven by a `.dark` class on <html>, not the OS setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  Register the accent vars as real <color>s so they interpolate. Changing the
+  primary colour (incl. live drag in the picker) then cross-fades the whole UI
+  instead of snapping.
+*/
+@property --color-accent {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #f43f5e;
+}
+@property --color-accent-strong {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #be2741;
+}
+/* `theme-ready` is added after the first paint (see main.tsx) so the initial
+   colour applies instantly and only subsequent changes cross-fade. */
+html.theme-ready {
+    transition:
+        --color-accent 0.35s ease,
+        --color-accent-strong 0.35s ease;
+}
+
+/*
+  Semantic design tokens for the Minimalism Bento Grid dashboard.
+  Surfaces + text flip between light/dark; a single configurable accent
+  (primary colour) drives every highlight. No shadows.
+*/
+@theme {
+    --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+
+    --color-surface: #ffffff; /* cards */
+    --color-surface-muted: #f4f4f5; /* chips, icon wells */
+    --color-surface-sunken: #fafafa; /* inputs, calendar cells */
+    --color-surface-hover: #e4e4e7; /* hovered muted surfaces */
+    --color-shell: rgba(255, 255, 255, 0.82); /* translucent container */
+    --color-line: rgba(228, 228, 231, 0.7);
+
+    --color-ink: #18181b;
+    --color-ink-soft: #52525b;
+    --color-ink-faint: #a1a1aa;
+
+    /* High-contrast solid buttons: neutral black/white, not the accent. The
+       accent is reserved for highlights + completion, keeping CTAs calm. */
+    --color-btn: #18181b;
+    --color-btn-ink: #ffffff;
+
+    /* Tooltips: neutral high-contrast chip, independent of the accent. */
+    --color-tooltip: #18181b;
+    --color-tooltip-ink: #ffffff;
+
+    /* Accent — only --color-accent changes per primary colour; the rest derive. */
+    --color-accent: #f43f5e;
+    --color-accent-soft: color-mix(in srgb, var(--color-accent) 16%, #ffffff);
+    --color-accent-ink: color-mix(in srgb, var(--color-accent) 78%, #000000);
+    /* Deepened accent for solid fills + white text; recomputed at runtime. */
+    --color-accent-strong: color-mix(in srgb, var(--color-accent) 78%, #000000);
+
+    /* Consistent rounding scale: outer container wraps slightly smaller cards. */
+    --radius-card: 0.875rem;
+    --radius-inner: 0.625rem;
+    --radius-pill: 999px;
+
+    /* Enter/exit animations for Radix popovers, selects, dropdowns. */
+    --animate-pop-in: pop-in 0.16s cubic-bezier(0.2, 0.8, 0.2, 1);
+    --animate-pop-out: pop-out 0.12s ease-in;
+}
+
+@keyframes pop-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes pop-out {
+    from {
+        opacity: 1;
+        transform: none;
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.96) translateY(-4px);
+    }
+}
+
+/* react-colorful picker, reshaped to match the app (used by ui/color-picker). */
+.react-colorful.pt-colorful {
+    width: 100%;
+    height: 220px;
+    gap: 12px;
+}
+.pt-colorful .react-colorful__saturation {
+    border-radius: 0.7rem;
+}
+.pt-colorful .react-colorful__hue {
+    height: 14px;
+    border-radius: 999px;
+}
+.pt-colorful .react-colorful__pointer {
+    width: 18px;
+    height: 18px;
+}
+
+/* react-day-picker themed to app tokens (used by ui/calendar.tsx). */
+.rdp-themed {
+    --rdp-accent-color: var(--color-accent-strong);
+    --rdp-accent-background-color: var(--color-accent-soft);
+    --rdp-today-color: var(--color-accent-ink);
+    --rdp-day_button-border-radius: 999px;
+    --rdp-selected-border: none;
+    --rdp-outside-opacity: 0.4;
+    --rdp-disabled-opacity: 0.35;
+    margin: 0;
+    color: var(--color-ink);
+    font-size: 0.82rem;
+}
+.rdp-themed .rdp-caption_label,
+.rdp-themed .rdp-month_caption {
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--color-ink);
+}
+.rdp-themed .rdp-weekday {
+    color: var(--color-ink-faint);
+    font-weight: 500;
+}
+.rdp-themed .rdp-day_button:hover {
+    background: var(--color-surface-muted);
+}
+.rdp-themed .rdp-chevron {
+    fill: currentColor;
+    color: var(--color-ink-soft);
+}
+
+.dark {
+    --color-surface: #1c1c1f;
+    --color-surface-muted: #27272a;
+    --color-surface-sunken: #232327;
+    --color-surface-hover: #3f3f46;
+    --color-shell: rgba(18, 18, 21, 0.78);
+    --color-line: rgba(63, 63, 70, 0.6);
+
+    --color-ink: #fafafa;
+    --color-ink-soft: #a1a1aa;
+    --color-ink-faint: #71717a;
+
+    --color-btn: #fafafa;
+    --color-btn-ink: #18181b;
+
+    /* Tooltip flips to a light chip so it stays readable on the dark UI. */
+    --color-tooltip: #fafafa;
+    --color-tooltip-ink: #18181b;
+
+    /* Translucent accent (like Tailwind's /15 chips) reads cleaner on dark
+       surfaces than mixing toward pure black, which looked muddy. */
+    --color-accent-soft: color-mix(in srgb, var(--color-accent) 24%, transparent);
+    --color-accent-ink: color-mix(in srgb, var(--color-accent) 72%, #ffffff);
+}
+
+@layer base {
+    * {
+        border-color: var(--color-line);
+    }
+
+    html,
+    body,
+    #root {
+        height: 100%;
+    }
+
+    body {
+        margin: 0;
+        font-family: var(--font-sans);
+        color: var(--color-ink);
+        -webkit-font-smoothing: antialiased;
+        /* Photographic background sitting behind the translucent shell.
+       The image is set at runtime from settings; this is the default. */
+        background-color: #6b5566;
+        background-image: url("/bg-2.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }
+
+    /* Every interactive element shows the pointer cursor. */
+    button,
+    a,
+    select,
+    summary,
+    label[for],
+    [role="button"],
+    [role="tab"],
+    [draggable="true"] {
+        cursor: pointer;
+    }
+    button:disabled,
+    [aria-disabled="true"] {
+        cursor: not-allowed;
+    }
+
+    /* Hide every scrollbar but keep scrolling fully functional. */
+    /* Thin, subtle scrollbars — visible enough to hint scrollable content. */
+    * {
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: rgba(113, 113, 122, 0.4) transparent;
+    }
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: rgba(113, 113, 122, 0.4);
+        border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(113, 113, 122, 0.6);
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}
